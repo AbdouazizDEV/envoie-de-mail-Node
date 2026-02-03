@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nouveau message de contact</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+    .container {
+      background-color: #ffffff;
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .header {
+      border-bottom: 3px solid #007bff;
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+    }
+    .header h1 {
+      color: #007bff;
+      margin: 0;
+      font-size: 24px;
+    }
+    .field {
+      margin-bottom: 20px;
+    }
+    .field-label {
+      font-weight: bold;
+      color: #555;
+      margin-bottom: 5px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .field-value {
+      color: #333;
+      font-size: 16px;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-left: 3px solid #007bff;
+      border-radius: 4px;
+    }
+    .message-field {
+      margin-top: 10px;
+    }
+    .message-value {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    .footer {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+      font-size: 12px;
+      color: #888;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📧 Nouveau message de contact</h1>
+    </div>
+
+    <div class="field">
+      <div class="field-label">Civilité</div>
+      <div class="field-value">{{civility}}</div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">Nom complet</div>
+      <div class="field-value">{{fullName}}</div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">Organisation</div>
+      <div class="field-value">{{organization}}</div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">Pays</div>
+      <div class="field-value">{{country}}</div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">Email</div>
+      <div class="field-value">{{email}}</div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">Téléphone</div>
+      <div class="field-value">{{phone}}</div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">Type de participation</div>
+      <div class="field-value">{{participationType}}</div>
+    </div>
+
+    <div class="field message-field">
+      <div class="field-label">Message</div>
+      <div class="field-value message-value">{{message}}</div>
+    </div>
+
+    <div class="footer">
+      <p>Cet email a été envoyé automatiquement depuis le formulaire de contact.</p>
+      <p>Date: {{date}}</p>
+    </div>
+  </div>
+</body>
+</html>

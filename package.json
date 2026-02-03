@@ -1,0 +1,28 @@
+{
+  "name": "node-mail-backend",
+  "version": "1.0.0",
+  "description": "Backend serverless Node.js pour l'envoi d'emails via Nodemailer sur Vercel",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel",
+    "build": "echo 'No build step required'"
+  },
+  "keywords": [
+    "vercel",
+    "serverless",
+    "nodemailer",
+    "email"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "nodemailer": "^6.9.8"
+  },
+  "devDependencies": {
+    "vercel": "^34.0.0"
+  },
+  "engines": {
+    "node": ">=18.x"
+  }
+}
