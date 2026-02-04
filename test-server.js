@@ -7,8 +7,9 @@ require('dotenv').config();
 // Importer les handlers
 const contactHandler = require('./api/contact');
 const reservationHandler = require('./api/reservation');
+const panelsInscriptionHandler = require('./api/panels-inscription');
 
-const PORT = 3000;
+const PORT = 3001;
 
 // Adapter res pour être compatible avec Vercel handlers
 function createResponseAdapter(res) {
@@ -64,6 +65,8 @@ const server = http.createServer(async (req, res) => {
       await contactHandler(req, adaptedRes);
     } else if (path === '/api/reservation') {
       await reservationHandler(req, adaptedRes);
+    } else if (path === '/api/panels-inscription') {
+      await panelsInscriptionHandler(req, adaptedRes);
     } else {
       res.writeHead(404, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ success: false, message: 'Route non trouvée' }));

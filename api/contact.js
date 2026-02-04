@@ -15,18 +15,27 @@ const setCorsHeaders = (res) => {
 const validateContactData = (data) => {
   const errors = [];
 
+  // Validation email
   if (!data.email || !data.email.trim()) {
     errors.push('Le champ email est requis');
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
     errors.push('Le format de l\'email est invalide');
   }
 
+  // Validation nom complet
   if (!data.fullName || !data.fullName.trim()) {
     errors.push('Le champ nom complet est requis');
   }
 
+  // Validation message
   if (!data.message || !data.message.trim()) {
     errors.push('Le champ message est requis');
+  }
+
+  // Validation participationType (optionnel mais si présent, doit être valide)
+  const validParticipationTypes = ['territoire', 'investisseur', 'partenaire', 'autre', 'speaker'];
+  if (data.participationType && data.participationType.trim() && !validParticipationTypes.includes(data.participationType.trim())) {
+    errors.push(`Type de participation invalide. Valeurs acceptées: ${validParticipationTypes.join(', ')}`);
   }
 
   return {

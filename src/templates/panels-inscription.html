@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nouvelle réservation</title>
+  <title>Nouvelle inscription aux panels</title>
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -21,12 +21,12 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     .header {
-      border-bottom: 3px solid #28a745;
+      border-bottom: 3px solid #9c27b0;
       padding-bottom: 20px;
       margin-bottom: 30px;
     }
     .header h1 {
-      color: #28a745;
+      color: #9c27b0;
       margin: 0;
       font-size: 24px;
     }
@@ -46,12 +46,22 @@
       font-size: 16px;
       padding: 10px;
       background-color: #f8f9fa;
-      border-left: 3px solid #28a745;
+      border-left: 3px solid #9c27b0;
       border-radius: 4px;
     }
+    .sessions {
+      margin-top: 10px;
+    }
+    .sessions ul {
+      margin: 5px 0;
+      padding-left: 20px;
+    }
+    .sessions li {
+      margin-bottom: 5px;
+    }
     .highlight {
-      background-color: #d4edda;
-      border-left-color: #28a745;
+      background-color: #e1bee7;
+      border-left-color: #9c27b0;
       font-weight: 600;
     }
     .footer {
@@ -67,12 +77,17 @@
 <body>
   <div class="container">
     <div class="header">
-      <h1>📅 Nouvelle réservation</h1>
+      <h1>📋 Nouvelle inscription aux panels</h1>
     </div>
 
     <div class="field">
-      <div class="field-label">Nom complet</div>
-      <div class="field-value">{{fullName}}</div>
+      <div class="field-label">Prénom</div>
+      <div class="field-value">{{firstName}}</div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">Nom</div>
+      <div class="field-value">{{lastName}}</div>
     </div>
 
     <div class="field">
@@ -91,22 +106,34 @@
     </div>
 
     <div class="field">
-      <div class="field-label">Type de participation</div>
-      <div class="field-value">{{participationType}}</div>
+      <div class="field-label">Fonction / Rôle</div>
+      <div class="field-value">{{role}}</div>
     </div>
 
     <div class="field">
-      <div class="field-label">{{participationTypeLabel}}</div>
-      <div class="field-value highlight">{{package}}</div>
+      <div class="field-label">Pays</div>
+      <div class="field-value">{{country}}</div>
     </div>
 
     <div class="field">
-      <div class="field-label">Nombre de personnes</div>
-      <div class="field-value highlight">{{numberOfPeople}}</div>
+      <div class="field-label">Code de validation</div>
+      <div class="field-value">{{validationCode}}</div>
+    </div>
+
+    <div class="field sessions">
+      <div class="field-label">Sessions sélectionnées</div>
+      <div class="field-value highlight">
+        {{sessions}}
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">Remarques</div>
+      <div class="field-value">{{remarks}}</div>
     </div>
 
     <div class="footer">
-      <p>Cet email a été envoyé automatiquement depuis le formulaire de réservation.</p>
+      <p>Cet email a été envoyé automatiquement depuis le formulaire d'inscription aux panels.</p>
       <p>Date: {{date}}</p>
     </div>
   </div>

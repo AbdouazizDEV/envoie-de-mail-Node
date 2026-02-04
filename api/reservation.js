@@ -15,20 +15,50 @@ const setCorsHeaders = (res) => {
 const validateReservationData = (data) => {
   const errors = [];
 
+  // Validation email
   if (!data.email || !data.email.trim()) {
     errors.push('Le champ email est requis');
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
     errors.push('Le format de l\'email est invalide');
   }
 
+  // Validation nom complet
   if (!data.fullName || !data.fullName.trim()) {
     errors.push('Le champ nom complet est requis');
   }
 
-  if (!data.package || !data.package.trim()) {
-    errors.push('Le champ package est requis');
+  // Validation participationType
+  const validParticipationTypes = ['participant', 'exposant', 'partenaire', 'speaker'];
+  if (!data.participationType || !data.participationType.trim()) {
+    errors.push('Le type de participation est requis');
+  } else if (!validParticipationTypes.includes(data.participationType)) {
+    errors.push(`Type de participation invalide. Valeurs acceptées: ${validParticipationTypes.join(', ')}`);
   }
 
+  // Validation package selon le type de participation
+  const participationType = data.participationType?.trim();
+  
+  if (participationType === 'exposant') {
+    // Pour les exposants, le stand est REQUIS
+    const validStands = ['Stand Standard', 'Stand Premium', 'Stand VIP'];
+    if (!data.package || !data.package.trim()) {
+      errors.push('Le stand est requis pour les exposants');
+    } else if (!validStands.includes(data.package.trim())) {
+      errors.push(`Stand invalide. Valeurs acceptées: ${validStands.join(', ')}`);
+    }
+  } else if (participationType === 'participant') {
+    // Pour les participants, le package est OPTIONNEL
+    const validPackages = ['Package Teranga', 'Package Silver', 'Package Gold', 'Non spécifié', ''];
+    if (data.package && data.package.trim() && !validPackages.includes(data.package.trim())) {
+      errors.push(`Package invalide. Valeurs acceptées: ${validPackages.filter(p => p !== '').join(', ')}, ou laissez vide`);
+    }
+    // Si vide, on définit "Non spécifié" par défaut
+    if (!data.package || !data.package.trim()) {
+      data.package = 'Non spécifié';
+    }
+  }
+
+  // Validation nombre de personnes
   if (!data.numberOfPeople || isNaN(parseInt(data.numberOfPeople)) || parseInt(data.numberOfPeople) < 1) {
     errors.push('Le nombre de personnes doit être un nombre valide supérieur à 0');
   }

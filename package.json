@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "vercel dev",
-    "deploy": "vercel",
-    "build": "echo 'No build step required'"
+    "deploy": "vercel"
   },
   "keywords": [
     "vercel",
