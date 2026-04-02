@@ -1,4 +1,5 @@
 const { createTransporter } = require('../config/mailer');
+const { buildVisitorBadgePdf } = require('./visitor-badge-pdf');
 const fs = require('fs');
 const path = require('path');
 
@@ -6,6 +7,43 @@ const path = require('path');
  * Service centralisé pour l'envoi d'emails
  */
 class MailService {
+  static escapeHtml(str) {
+    if (str == null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  static getParticipationMeta(participationType) {
+    const t = (participationType || '').trim();
+    const displayMap = {
+      participant: 'Participant',
+      exposant: 'Exposant',
+      partenaire: 'Partenaire',
+      speaker: 'Speaker',
+      visiteur: 'Visiteur',
+    };
+    let participationTypeLabel = 'Package / Stand';
+    if (t === 'exposant') participationTypeLabel = 'Stand';
+    else if (t === 'participant') participationTypeLabel = 'Package';
+    else if (t === 'visiteur') participationTypeLabel = 'Formule';
+    else if (t === 'partenaire' || t === 'speaker') participationTypeLabel = 'Détails / offre';
+
+    return {
+      participationTypeDisplay: displayMap[t] || t || '—',
+      participationTypeLabel,
+    };
+  }
+
+  static generateBadgeRef() {
+    const part = Date.now().toString(36).toUpperCase().slice(-5);
+    const rnd = Math.random().toString(36).substring(2, 6).toUpperCase();
+    return `VIS-2026-${part}-${rnd}`;
+  }
+
   /**
    * Charge un template HTML depuis le dossier templates
    * @param {string} templateName - Nom du template (sans extension)
@@ -44,7 +82,7 @@ class MailService {
    * @param {string} [options.from] - Expéditeur (optionnel)
    * @returns {Promise<Object>}
    */
-  static async sendEmail({ to, subject, html, from = null }) {
+  static async sendEmail({ to, subject, html, from = null, attachments = [] }) {
     try {
       const transporter = createTransporter();
       const mailUser = process.env.MAIL_USER;
@@ -57,6 +95,10 @@ class MailService {
         subject: subject,
         html: html,
       };
+
+      if (attachments && attachments.length > 0) {
+        mailOptions.attachments = attachments;
+      }
 
       const info = await transporter.sendMail(mailOptions);
       
@@ -104,30 +146,96 @@ class MailService {
    * @returns {Promise<Object>}
    */
   static async sendReservationEmail(reservationData) {
-    // Déterminer le label selon le type de participation
-    const participationType = reservationData.participationType || '';
-    const participationTypeLabel = participationType === 'exposant' ? 'Stand' : 
-                                   participationType === 'participant' ? 'Package' : 
-                                   'Package / Stand';
+    const mailUser = process.env.MAIL_USER;
+    const mailTo = process.env.MAIL_TO || mailUser;
+    const participationType = (reservationData.participationType || '').trim();
+    const meta = this.getParticipationMeta(participationType);
+
+    let visitorBadgeSection = '';
+    const attachments = [];
+
+    if (participationType === 'visiteur') {
+      const badgeRef = this.generateBadgeRef();
+      const registeredAt = new Date().toLocaleString('fr-FR', {
+        dateStyle: 'full',
+        timeStyle: 'medium',
+      });
+      const org = (reservationData.organization || '').trim();
+      const phone = (reservationData.phone || '').trim();
+      const organizationBlock = org
+        ? `<p style="margin:12px 0 0 0;font-size:13px;color:#94a3b8;">${this.escapeHtml(org)}</p>`
+        : '';
+      const phoneBlock = phone
+        ? `<p style="margin:8px 0 0 0;font-size:13px;color:#94a3b8;">${this.escapeHtml(phone)}</p>`
+        : '';
+
+      const badgeCardHtml = this.loadTemplate('visitor-badge-fragment', {
+        fullName: this.escapeHtml(reservationData.fullName || ''),
+        email: this.escapeHtml(reservationData.email || ''),
+        package: this.escapeHtml(reservationData.package || 'Accès Forum & Visites'),
+        numberOfPeople: this.escapeHtml(String(reservationData.numberOfPeople || '1')),
+        badgeRef: this.escapeHtml(badgeRef),
+        registeredAt: this.escapeHtml(registeredAt),
+        visitorTagline: 'Accès au forum, aux espaces de visite et au networking.',
+        organizationBlock,
+        phoneBlock,
+        instructions:
+          'À remettre au visiteur le jour du forum (badge écran ou PDF imprimé). Une pièce d’identité peut être demandée à l’accueil.',
+        pdfNote:
+          '<strong style="color:#f8fafc;">PDF joint</strong> à cet email : impression format carte pour badge physique.',
+      });
+
+      visitorBadgeSection = `
+<div style="margin-top:28px;padding-top:24px;border-top:2px dashed #dee2e6;">
+  <p style="margin:0 0 14px 0;font-size:14px;font-weight:bold;color:#155724;text-transform:uppercase;letter-spacing:0.05em;">Aperçu du badge visiteur</p>
+  ${badgeCardHtml}
+</div>`;
+
+      const pdfBuffer = await buildVisitorBadgePdf({
+        fullName: reservationData.fullName,
+        email: reservationData.email,
+        phone,
+        organization: org,
+        package: reservationData.package,
+        numberOfPeople: reservationData.numberOfPeople,
+        badgeRef,
+        registeredAt,
+      });
+
+      attachments.push({
+        filename: 'badge-visiteur-forum.pdf',
+        content: pdfBuffer,
+        contentType: 'application/pdf',
+      });
+    }
 
     const html = this.loadTemplate('reservation', {
-      fullName: reservationData.fullName || '',
-      email: reservationData.email || '',
-      phone: reservationData.phone || '',
-      organization: reservationData.organization || '',
-      participationType: participationType,
-      participationTypeLabel: participationTypeLabel,
-      package: reservationData.package || '',
-      numberOfPeople: reservationData.numberOfPeople || '1',
+      fullName: this.escapeHtml(reservationData.fullName || ''),
+      email: this.escapeHtml(reservationData.email || ''),
+      phone: this.escapeHtml(reservationData.phone || ''),
+      organization: this.escapeHtml(reservationData.organization || ''),
+      participationType: this.escapeHtml(participationType),
+      participationTypeDisplay: meta.participationTypeDisplay,
+      participationTypeLabel: meta.participationTypeLabel,
+      package: this.escapeHtml(reservationData.package || ''),
+      numberOfPeople: this.escapeHtml(String(reservationData.numberOfPeople || '1')),
+      visitorBadgeSection,
       date: new Date().toLocaleString('fr-FR', {
         dateStyle: 'full',
         timeStyle: 'medium',
       }),
     });
 
+    const subject =
+      participationType === 'visiteur'
+        ? 'Nouvelle réservation — Visiteur (badge PDF joint)'
+        : 'Nouvelle réservation';
+
     return await this.sendEmail({
-      subject: 'Nouvelle réservation',
-      html: html,
+      to: mailTo,
+      subject,
+      html,
+      attachments,
     });
   }
 
@@ -198,3 +306,4 @@ class MailService {
 }
 
 module.exports = MailService;
+

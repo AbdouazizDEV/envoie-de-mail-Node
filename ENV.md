@@ -48,3 +48,4 @@ Par défaut, ces valeurs sont déjà configurées pour Gmail dans le code.
 - N'utilisez **JAMAIS** votre mot de passe Gmail normal
 - Le mot de passe d'application ne s'affiche qu'**UNE SEULE FOIS** - copiez-le immédiatement !
 - Si vous le perdez, créez-en un nouveau
+

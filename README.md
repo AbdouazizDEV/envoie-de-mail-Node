@@ -474,3 +474,4 @@ MIT
 
 Pour toute question ou problème, vérifiez les logs Vercel dans le dashboard ou consultez la documentation Nodemailer : https://nodemailer.com/
 # envoie-de-mail-Node
+

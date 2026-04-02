@@ -163,3 +163,4 @@ Si vous rencontrez des difficultés :
 ---
 
 **✅ Une fois configuré, votre backend pourra envoyer des emails via Gmail !**
+

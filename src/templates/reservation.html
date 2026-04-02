@@ -92,7 +92,7 @@
 
     <div class="field">
       <div class="field-label">Type de participation</div>
-      <div class="field-value">{{participationType}}</div>
+      <div class="field-value">{{participationTypeDisplay}}</div>
     </div>
 
     <div class="field">
@@ -105,6 +105,8 @@
       <div class="field-value highlight">{{numberOfPeople}}</div>
     </div>
 
+    {{visitorBadgeSection}}
+
     <div class="footer">
       <p>Cet email a été envoyé automatiquement depuis le formulaire de réservation.</p>
       <p>Date: {{date}}</p>
@@ -112,3 +114,4 @@
   </div>
 </body>
 </html>
+

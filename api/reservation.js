@@ -28,7 +28,7 @@ const validateReservationData = (data) => {
   }
 
   // Validation participationType
-  const validParticipationTypes = ['participant', 'exposant', 'partenaire', 'speaker'];
+  const validParticipationTypes = ['participant', 'exposant', 'partenaire', 'speaker', 'visiteur'];
   if (!data.participationType || !data.participationType.trim()) {
     errors.push('Le type de participation est requis');
   } else if (!validParticipationTypes.includes(data.participationType)) {
@@ -55,6 +55,23 @@ const validateReservationData = (data) => {
     // Si vide, on définit "Non spécifié" par défaut
     if (!data.package || !data.package.trim()) {
       data.package = 'Non spécifié';
+    }
+  } else if (participationType === 'visiteur') {
+    // Visiteurs : accès forum, visites, découverte — formule affichée sur le badge
+    const validVisitorFormulas = [
+      'Accès Forum & Visites',
+      'Accès visiteur',
+      'Découverte du forum',
+      'Non spécifié',
+      '',
+    ];
+    if (data.package && data.package.trim() && !validVisitorFormulas.includes(data.package.trim())) {
+      errors.push(
+        `Formule visiteur invalide. Valeurs acceptées: ${validVisitorFormulas.filter((p) => p !== '').join(', ')}, ou laissez vide`
+      );
+    }
+    if (!data.package || !data.package.trim()) {
+      data.package = 'Accès Forum & Visites';
     }
   }
 
@@ -130,3 +147,4 @@ module.exports = async (req, res) => {
     });
   }
 };
+

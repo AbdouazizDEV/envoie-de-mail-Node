@@ -79,3 +79,4 @@ server.listen(PORT, () => {
   console.log(`📧 Test Contact: curl -X POST http://localhost:${PORT}/api/contact -H "Content-Type: application/json" -d '{"civility":"Monsieur","fullName":"Jean Dupont","email":"test@example.com","message":"Test message"}'`);
   console.log(`📅 Test Réservation: curl -X POST http://localhost:${PORT}/api/reservation -H "Content-Type: application/json" -d '{"fullName":"Marie Martin","email":"marie@example.com","package":"Premium","numberOfPeople":"2"}'`);
 });
+
